@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p>제목 : {{ content.title }}</p>
+    <p>내용 : {{ content.content }}</p>
+    <p>작성시간 : {{ content.created_at }}</p>
+    <p>수정시간 : {{ content.updated_at }}</p>
+    <p>장르 : {{ content.genre }}</p>
+    <p><img src="{{ content.image.url }}" alt="{{ content.image }}"></p>
+    {% if request.user == content.user %}
+        <form action="{% url 'contents:delete' content.pk %}" method='POST'>
+            {% csrf_token %}
+            <input type="submit" value='삭제하기'>
+        </form>
+    {% endif %}
+    {% for comment in comments %}
+        <p>{{ comment.user.nickname }} : {{ comment.text }}</p>
+    {% endfor %}
+    {% if request.user.is_authenticated %}
+        <form action="{% url 'contents:create_comment' content.pk %}" method='POST'>
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="댓글작성">
+        </form>
+    {% endif %}
+    <a href="{% url 'contents:index' %}">BACK</a>
+{% endblock content %}

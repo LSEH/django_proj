@@ -15,6 +15,21 @@
                 <li class="nav-item">
                     <a class="nav-link text-white-50" href="">Create</a>
                 </li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <form action="{% url 'accounts:logout' %}" method='POST'>
+                            {% csrf_token %}
+                            <input type="submit" value="로그아웃">
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" href="{% url 'accounts:login' %}">로그인</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" href="{% url 'accounts:signup' %}">회원가입</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

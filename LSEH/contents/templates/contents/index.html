@@ -2,10 +2,11 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
-        <form action="{% url 'accounts:logout' %}" method='POST'>
-            {% csrf_token %}
-            <input type="submit" value="로그아웃">
-        </form>
+        <h2>{{ request.user.nickname }} 합격</h2>
+        <a href="{% url 'contents:create' %}">글쓰기</a>
     {% endif %}
-    <h2>{{ request.user }} ㅎㅇ</h2>
+    {% for content in contents %}
+        <p>제목 : <a href="{% url 'contents:detail' content.pk %}">{{ content.title }}</a></p>
+        <img src="{{ content.image.url }}" alt="{{ content.image }}">
+    {% endfor %}
 {% endblock content %}
