@@ -22,6 +22,9 @@
                             <input type="submit" value="로그아웃">
                         </form>
                     </li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:profile' request.user.nickname %}">{{ request.user.nickname }}</a>
+                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link text-white-50" href="{% url 'accounts:login' %}">로그인</a>

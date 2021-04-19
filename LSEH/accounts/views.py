@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.views.decorators.http import require_POST
+from django.http import HttpResponse
+from django.db.models import Max, Count, Sum
 
 
 def signup(request):
@@ -20,7 +22,7 @@ def signup(request):
         'form' : form,
     }
     return render(request, 'accounts/signup.html', context)
-    
+
 
 def login(request):
     if request.user.is_authenticated:
@@ -59,6 +61,8 @@ def profile(request, nickname):
             'form' : form,
         }
         return render(request, 'accounts/profile.html', context)
+    else:
+        return HttpResponse(status=404)
 
 
 def password(request):
@@ -75,3 +79,39 @@ def password(request):
     }
     return render(request, 'accounts/password.html', context)
 
+
+def mylike(request, nickname):
+    if request.user.nickname == nickname:
+        user = get_object_or_404(get_user_model(), nickname=nickname)
+        like_contents = user.like_contents.all()
+        like_reviews = user.like_reviews.all()
+        context = {
+            'like_contents' : like_contents,
+            'like_reviews' : like_reviews,
+        }
+        return render(request, 'accounts/mydata.html', context)
+    else:
+        return HttpResponse(status=404)
+
+
+def mylater(request, nickname):
+    if request.user.nickname == nickname:
+        user = get_object_or_404(get_user_model(), nickname=nickname)
+        later_reviews = user.later_reviews.all()
+        context = {
+            'later_reviews' : later_reviews,
+        }
+        return render(request, 'accounts/mydata.html', context)
+    else:
+        return HttpResponse(status=404)
+
+
+def mystats(request, nickname):
+    if request.user.nickname == nickname:
+        max_genre = request.user.watched_reviews.values('genre').annotate(genre_count=Count('genre')).order_by('-genre_count')[0]['genre']
+        context = {
+            'max_genre' : max_genre,
+        }
+        return render(request, 'accounts/mydata.html', context)
+    else:
+        return HttpResponse(status=404)

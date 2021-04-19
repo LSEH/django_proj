@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if request.resolver_match.url_name == 'mylike' %}
+        <h2><b>Like</b></h2>
+        {% for like_review in like_reviews %}
+            <p>리뷰 제목 : {{ like_review.title }}</p>
+        {% endfor %}
+        <hr>
+        {% for like_content in like_contents %}
+            <p>컨텐츠 제목 : {{ like_content.title }}</p>
+        {% endfor %}
+    {% elif request.resolver_match.url_name == 'mylater' %}
+        <h2><b>Later</b></h2>
+        {% for later_review in later_reviews %}
+            <p>리뷰 제목 : {{ later_review.title }}</p>
+        {% endfor %}
+        <hr>
+    {% else %}
+        <h2>{{ max_genre }}</h2>
+    {% endif %}
+{% endblock content %}

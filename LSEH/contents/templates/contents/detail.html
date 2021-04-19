@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
+    <p>{{ content.like_users.all|length }} 명이 이 글을 좋아합니다.</p>
     <p>제목 : {{ content.title }}</p>
+    <form action="{% url 'contents:like_contents' content.pk %}" method='POST'>
+        {% csrf_token %}
+        {% if request.user in content.like_users.all %}
+            <input type="submit" value="좋아요 취소">    
+        {% else %}
+            <input type="submit" value="좋아요">
+        {% endif %}
+    </form>
     <p>내용 : {{ content.content }}</p>
     <p>작성시간 : {{ content.created_at }}</p>
     <p>수정시간 : {{ content.updated_at }}</p>
@@ -12,8 +21,24 @@
             <input type="submit" value='삭제하기'>
         </form>
     {% endif %}
+    <a href="{% url 'contents:create_review' content.pk %}">리뷰 작성</a>
     {% for comment in comments %}
-        <p>{{ comment.user.nickname }} : {{ comment.text }}</p>
+        <p>{{ comment.user.nickname }} : {{ comment.text }} {{ comment.like_users.all|length }}</p>
+        {% if request.user == comment.user %}
+            <form action="{% url 'contents:delete_comment' content.pk comment.pk %}" method='POST'>
+                {% csrf_token %}
+                <input type="submit" value='댓글삭제'>
+            </form>
+        {% endif %}
+        <form action="{% url 'contents:like_comments' content.pk comment.pk %}" method='POST'>
+            {% csrf_token %}
+            {% if request.user in comment.like_users.all %}
+                <input type="submit" value="좋아요 취소">
+            {% else %}
+                <input type="submit" value="좋아요">
+            {% endif %}
+        </form>
+        <hr>
     {% endfor %}
     {% if request.user.is_authenticated %}
         <form action="{% url 'contents:create_comment' content.pk %}" method='POST'>
@@ -22,5 +47,33 @@
             <input type="submit" value="댓글작성">
         </form>
     {% endif %}
+    {% for review in reviews %}
+        <div class="card">
+            <div class="card-body text-dark">
+                <p>{{ review.title }} {{ review.like_users.all|length }}명이 좋아합니다.</p>
+                <form action="{% url 'contents:watch_reviews' content.pk review.pk %}" method='POST'>
+                    {% csrf_token %}
+                    <p><a href="https://www.naver.com" target='_blank'>URL로 이동</a></p>
+                    <input type="submit" value="DB에 추가">
+                </form>
+                <form action="{% url 'contents:see_later' content.pk review.pk %}" method='POST'>
+                    {% csrf_token %}
+                    {% if request.user in review.later_users.all %}
+                        <input type="submit" value="나중에 보기 취소">
+                    {% else %}
+                        <input type="submit" value="나중에 보기">
+                    {% endif %}
+                </form>
+                <form action="{% url 'contents:like_reviews' content.pk review.pk %}" method='POST'>
+                    {% csrf_token %}
+                    {% if request.user in review.like_users.all %}
+                        <input type="submit" value="좋아요 취소">
+                    {% else %}
+                        <input type="submit" value="좋아요">
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    {% endfor %}
     <a href="{% url 'contents:index' %}">BACK</a>
 {% endblock content %}

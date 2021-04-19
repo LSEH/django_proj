@@ -5,4 +5,7 @@
         {{ form.as_p }}
         <input type="submit" value="수정하기">
     </form>
+    <a href="{% url 'accounts:mylike' request.user.nickname %}">좋아요 페이지</a>
+    <a href="{% url 'accounts:mylater' request.user.nickname %}">나중에 페이지</a>
+    <a href="{% url 'accounts:mystats' request.user.nickname %}">통계 페이지</a>
 {% endblock content %}
