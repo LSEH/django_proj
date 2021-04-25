@@ -16,6 +16,16 @@
         {% endfor %}
         <hr>
     {% else %}
-        <h2>{{ max_genre }}</h2>
+        <h2><b>통계</b></h2>
+        <h2>전체 리뷰 수 : {{ total_reviews }}</h2>
+        <h2>내가 시청한 리뷰 수 : {{ watched_reviews_num }}</h2>
+        <h2>가장 많이 본 장르 : {{ max_genre }}</h2>
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    {{ comment.content.pk }}번 &lt;{{ comment.content.title }}&gt; : {{ comment.text }}
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endblock content %}

@@ -12,4 +12,5 @@ urlpatterns = [
     path('profile/<nickname>/like/', views.mylike, name='mylike'),
     path('profile/<nickname>/later/', views.mylater, name='mylater'),
     path('profile/<nickname>/stats/', views.mystats, name='mystats'),
+    path('alarm/', views.password_alarm, name='password_alarm'),
 ]

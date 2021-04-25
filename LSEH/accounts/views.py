@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
-from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
-from django.db.models import Max, Count, Sum
+from django.db.models import Count
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+from contents.models import Review
+from datetime import datetime, timezone
+from dateutil.relativedelta import relativedelta
 
 
 def signup(request):
@@ -31,6 +34,8 @@ def login(request):
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
             auth_login(request, form.get_user())
+            if relativedelta(datetime.now(timezone.utc), form.get_user().password_date).days > 15:
+                return redirect('accounts:password_alarm')
             return redirect('contents:index')
     else:
         form = AuthenticationForm()
@@ -53,7 +58,10 @@ def profile(request, nickname):
         if request.method == 'POST':
             form = CustomUserChangeForm(data=request.POST, instance=request.user)
             if form.is_valid():
-                user_info = form.save()
+                user_info = form.save(commit=False)
+                if nickname != user_info.nickname:
+                    user_info.nickname_date = datetime.now()
+                user_info.save()
                 return redirect('accounts:profile', user_info.nickname)
         else:
             form = CustomUserChangeForm(instance=request.user)
@@ -69,7 +77,9 @@ def password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
-            user_info = form.save()
+            user_info = form.save(commit=False)
+            user_info.password_date = datetime.now()
+            user_info.save()
             update_session_auth_hash(request, form.user)
             return redirect('accounts:profile', user_info.nickname)
     else:
@@ -108,10 +118,21 @@ def mylater(request, nickname):
 
 def mystats(request, nickname):
     if request.user.nickname == nickname:
-        max_genre = request.user.watched_reviews.values('genre').annotate(genre_count=Count('genre')).order_by('-genre_count')[0]['genre']
+        watched_reviews = request.user.watched_reviews.all()
+        max_genre = watched_reviews.values('genre').annotate(genre_count=Count('genre')).order_by('-genre_count')[0]['genre']
+        watched_reviews_num = watched_reviews.count()
+        total_reviews = Review.objects.all().count()
+        comments = request.user.comment_set.all()
         context = {
             'max_genre' : max_genre,
+            'total_reviews' : total_reviews,
+            'watched_reviews_num' : watched_reviews_num,
+            'comments' : comments,
         }
         return render(request, 'accounts/mydata.html', context)
     else:
         return HttpResponse(status=404)
+
+
+def password_alarm(request):
+    return render(request, 'accounts/password_alarm.html')
