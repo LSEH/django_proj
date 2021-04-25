@@ -2,6 +2,12 @@
 {% block content %}
     <form action="{% url 'accounts:profile' request.user.nickname %}" method='POST'>
         {% csrf_token %}
+        <label for="nickname"></label>
+        {% if date_period <= 0 %}
+            <p>닉네임 : <input type="text" name="nickname" id="nickname" value={{ request.user.nickname }}></p>
+        {% else %}
+            <p>닉네임 : {{ request.user.nickname }} -> {{ date_period }}일 후부터 변경 가능</p>
+        {% endif %}
         {{ form.as_p }}
         <input type="submit" value="수정하기">
     </form>

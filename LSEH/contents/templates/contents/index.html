@@ -2,11 +2,15 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
-        <h2>{{ request.user.nickname }} 합격</h2>
         <a href="{% url 'contents:create' %}">글쓰기</a>
+        <hr>
     {% endif %}
     {% for content in contents %}
+        <p>글 번호 : {{ content.id }}</p>
         <p>제목 : <a href="{% url 'contents:detail' content.pk %}">{{ content.title }}</a></p>
+        <p>작성자 : {{ content.user.nickname }}</p>
+        <p>리뷰 개수 : {{ content.review_set.all|length}}</p>
         <img src="{{ content.image.url }}" alt="{{ content.image }}">
+        <hr>
     {% endfor %}
 {% endblock content %}
