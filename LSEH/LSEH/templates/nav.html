@@ -25,6 +25,20 @@
                     <li class="nav-item">
                         <a href="{% url 'accounts:profile' request.user.nickname %}">{{ request.user.nickname }}</a>
                     </li>
+                    {% comment %} {% if comments %}
+                        <li>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    {% for comment in comments %}
+                                        <li><a class="dropdown-item" href="#">{{ comment.user.nickname }} : {{ comment.text }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %} {% endcomment %}
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link text-white-50" href="{% url 'accounts:login' %}">로그인</a>

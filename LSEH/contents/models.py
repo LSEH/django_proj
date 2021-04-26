@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 class Content(models.Model):
     drama = '드라마'
     action = '액션'

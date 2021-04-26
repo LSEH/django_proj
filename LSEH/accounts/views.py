@@ -30,7 +30,6 @@ def signup(request):
         return HttpResponse(status=405)
 
 
-
 def login(request):
     if request.user.is_authenticated:
         return redirect('contents:index')

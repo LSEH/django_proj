@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ContentForm, CommentForm, ReviewForm
 from .models import Content, Comment, Review
 from django.views.decorators.http import require_POST
+from datetime import datetime, timedelta
+import requests
 
 
 def index(request):
@@ -200,3 +202,39 @@ def watch_reviews(request, content_id, review_id):
         return redirect("contents:detail", content_id)
     else:
         return redirect('accounts:login')
+
+
+def comment_alarm(request):
+    contents = request.user.content_set.all()
+    today = datetime.now()
+    comments = []
+    for content in contents:
+        data = content.comment_set.filter(created_at__gte=(today - timedelta(days=7)))
+        for comment in data:
+            comments.append(comment)
+    comments.sort(key= lambda x : x.created_at, reverse=True)
+    context = {
+        'comments' : comments,
+    }
+    return render(request, 'nav.html', context)
+
+
+# def youtube():
+#     url = ' https://www.googleapis.com/youtube/v3/search'
+#     params = {
+#         'key': 'AIzaSyDMRR_ZEVgEtxz5rP_dOj-wptDYqqEywdU',
+#         'part': 'snippet',
+#         'type': 'video',
+#         'maxResults': '10',
+#         'q': '아이유',
+#     }
+#     response = requests.get(url, params)
+#     response_dict = response.json()
+
+#     print(response_dict['items'])
+#     context = {
+#         'youtube_items': response_dict['items']
+#     }
+#     return render(request, 'youtube.html', context)
+
+# youtube()

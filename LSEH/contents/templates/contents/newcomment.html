@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if comments %}
+        {% for comment in comments %}
+            <h2> {{ comment.user.nickname }} : {{ comment.text }} </h2>
+        {% endfor %}
+    {% else %}
+        <h2>없음</h2>
+    {% endif %}
+{% endblock content %}

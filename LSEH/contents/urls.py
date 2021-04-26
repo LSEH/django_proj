@@ -19,4 +19,5 @@ urlpatterns = [
     path('see_later/<int:content_id>/review/<int:review_id>/', views.see_later, name='see_later'),
     path('like/<int:content_id>/review/<int:review_id>/', views.like_reviews, name='like_reviews'),
     path('watch/<int:content_id>/review/<int:review_id>/', views.watch_reviews, name='watch_reviews'),
+    path('comment_alarm/', views.comment_alarm, name='comment_alarm'),
 ]
