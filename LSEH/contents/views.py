@@ -222,7 +222,7 @@ def comment_alarm(request):
 # def youtube():
 #     url = ' https://www.googleapis.com/youtube/v3/search'
 #     params = {
-#         'key': 'AIzaSyDMRR_ZEVgEtxz5rP_dOj-wptDYqqEywdU',
+#         'key': '',
 #         'part': 'snippet',
 #         'type': 'video',
 #         'maxResults': '10',
